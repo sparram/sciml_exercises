@@ -1,0 +1,30 @@
+physics:
+  a: 0.1
+  eps: 0.35
+  omega_factor: 0.2   # omega = pi * omega_factor -> pi / 5
+  res_x: 80
+  res_y: 40
+  x_max: 2.0
+  y_max: 1.0
+  t_max: 10.0
+  dt: 0.1
+
+dataset:
+  num_delays: 10
+  batch_size: 32
+  shuffle: true
+
+model:
+  n_modes: [32, 16]
+  hidden_channels: 48
+  n_layers: 3
+  learning_rate: 0.01
+  epochs: 50
+  device: "cpu"       # Cambiar a "cuda" si tienes GPU disponible
+  weights_path: "model_weights.pt"
+
+viz:
+  lic_length: 16
+  lic_step_size: 0.008
+  phase_speed: 8.0
+  noise_seed: 42
