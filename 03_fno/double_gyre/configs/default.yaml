@@ -18,8 +18,9 @@ model:
   n_modes: [32, 16]
   hidden_channels: 48
   n_layers: 3
-  learning_rate: 0.01
-  epochs: 50
+  learning_rate: 0.003
+  epochs: 100
+  noise_std: 0.01
   device: "cpu"       # Cambiar a "cuda" si tienes GPU disponible
   weights_path: "model_weights.pt"
 
@@ -28,3 +29,7 @@ viz:
   lic_step_size: 0.008
   phase_speed: 8.0
   noise_seed: 42
+  viz_res_x: 240
+  viz_res_y: 120
+  use_paraview_cmap: true
+  fps: 8

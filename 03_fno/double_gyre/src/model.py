@@ -23,14 +23,18 @@ def build_fno_model(num_delays: int, cfg: dict) -> FNO:
 def train_fno(model: FNO, dataloader: DataLoader, cfg: dict) -> list[float]:
     """Entrena el modelo FNO y guarda los mejores pesos en disco."""
     m_cfg = cfg["model"]
+    num_delays = int(cfg["dataset"]["num_delays"])
+    noise_std = float(m_cfg.get("noise_std", 0.01))
     device = m_cfg["device"]
-    epochs = m_cfg["epochs"]
+    epochs = int(m_cfg["epochs"])
 
     optimizer = torch.optim.Adam(model.parameters(), lr=float(m_cfg["learning_rate"]))
     criterion = nn.MSELoss()
 
     best_loss = float("inf")
     loss_history = []
+
+    vel_channels = 2 * (num_delays + 1)
 
     pbar = tqdm.tqdm(range(epochs), desc="Training FNO")
     for _ in pbar:
@@ -43,7 +47,14 @@ def train_fno(model: FNO, dataloader: DataLoader, cfg: dict) -> list[float]:
             batch_y = batch_y.to(device)
 
             optimizer.zero_grad()
-            preds = model(batch_x)
+
+            batch_x_noisy = batch_x.clone()
+            if noise_std > 0.0:
+                batch_x_noisy[:, :vel_channels] += noise_std * torch.randn_like(
+                    batch_x[:, :vel_channels]
+                )
+
+            preds = model(batch_x_noisy)
             loss = criterion(preds, batch_y)
             loss.backward()
             optimizer.step()
